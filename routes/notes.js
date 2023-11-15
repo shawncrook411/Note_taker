@@ -3,6 +3,7 @@ const notes = require ('express').Router()
 const db = path.join(__dirname, '../db/db.json')
 const {readAndAppend} = require('../helpers/fsUtils');
 const fs = require('fs')
+const uuid = require('../helpers/uuid')
 
 notes.get('/', (req, res) => {
     console.log('landed on notes')
@@ -10,16 +11,26 @@ notes.get('/', (req, res) => {
 })
 
 notes.post('/', (req, res) => {
-    readAndAppend(req.body, db)
-    res.status(200).send("Good!")
+    if (req.body.title && req.body.text)
+    {   
+        let object = {
+        title : req.body.title,
+        text : req.body.text,
+        id : uuid(),
+        }
+        
+        readAndAppend(object, db)
+        res.status(200).send("Good!")
+    }
 })
 
-notes.delete('/:title', (req, res) => {
+notes.delete('/:id', (req, res) => {
     let notesData
     fs.readFile(db, (error, data) => {
         if (error)
         {
             console.error(error)
+            res.status(400)
         }
         else
         {
@@ -27,7 +38,7 @@ notes.delete('/:title', (req, res) => {
 
             for (let note of notesData)
             {
-                if (note.title === req.params.title)
+                if (note.id === req.params.id)
                 {
                     notesData.splice(notesData.indexOf(note), 1)
                     notesData = JSON.stringify(notesData, null, 4)
@@ -36,6 +47,8 @@ notes.delete('/:title', (req, res) => {
                     return
                 }
             }
+            res.status(404).send("Note title doesn't exist")
+            return
         }        
     })    
 })

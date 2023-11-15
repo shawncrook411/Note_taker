@@ -40,40 +40,45 @@ const getNotes = () =>
   }
 
 const saveNote = (note) =>
-  fetch('/api/notes', {
+  {
+    let promise = fetch('/api/notes', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(note)
-  });
+  })
+  return promise
+}
 
-const deleteNote = (id) =>
-  fetch(`/api/notes/${id}`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
+const deleteNote = (id) => {
+    let promise = fetch(`/api/notes/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    return promise    
+  }
 
 const renderActiveNote = () => {
-  hide(saveNoteBtn);
-  hide(clearBtn);
+  hide(saveNoteBtn)
+  hide(clearBtn)
 
   if (activeNote.id) {
-    show(newNoteBtn);
-    noteTitle.setAttribute('readonly', true);
-    noteText.setAttribute('readonly', true);
-    noteTitle.value = activeNote.title;
-    noteText.value = activeNote.text;
+    show(newNoteBtn)
+    noteTitle.setAttribute('readonly', true)
+    noteText.setAttribute('readonly', true)
+    noteTitle.value = activeNote.title
+    noteText.value = activeNote.text
   } else {
     hide(newNoteBtn);
-    noteTitle.removeAttribute('readonly');
-    noteText.removeAttribute('readonly');
-    noteTitle.value = '';
-    noteText.value = '';
+    noteTitle.removeAttribute('readonly')
+    noteText.removeAttribute('readonly')
+    noteTitle.value = ''
+    noteText.value = ''
   }
-};
+}
 
 const handleNoteSave = () => {
   const newNote = {
@@ -83,7 +88,7 @@ const handleNoteSave = () => {
   saveNote(newNote).then(() => {
     getAndRenderNotes();
     renderActiveNote();
-  });
+  })
 };
 
 // Delete the clicked note
@@ -93,6 +98,8 @@ const handleNoteDelete = (e) => {
 
   const note = e.target;
   const noteId = JSON.parse(note.parentElement.getAttribute('data-note')).id;
+
+
 
   if (activeNote.id === noteId) {
     activeNote = {};
@@ -133,7 +140,6 @@ const handleRenderBtns = () => {
 // Render the list of note titles
 const renderNoteList = async (notes) => {
   let jsonNotes = await notes.json();
-  console.log(jsonNotes)
   if (window.location.pathname === '/notes') {
     noteList.forEach((el) => (el.innerHTML = ''));
   }
@@ -181,7 +187,6 @@ const renderNoteList = async (notes) => {
   });
 
   if (window.location.pathname === '/notes' | window.location.pathname === '/notes.html') {
-    console.log(noteListItems)
     noteListItems.forEach((note) => {
       noteList[0].append(note)
     })
