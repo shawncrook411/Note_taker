@@ -180,7 +180,7 @@ const renderNoteList = async (notes) => {
     noteListItems.push(li);
   });
 
-  if (window.location.pathname === '/notes') {
+  if (window.location.pathname === '/notes' | window.location.pathname === '/notes.html') {
     console.log(noteListItems)
     noteListItems.forEach((note) => {
       noteList[0].append(note)
