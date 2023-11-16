@@ -1,15 +1,25 @@
 const path = require('path')
 const notes = require ('express').Router()
+
+//Pathname and file need to be joined
 const db = path.join(__dirname, '../db/db.json')
+
+//Used for the readAndAppend function, allows for easier use to append JSON data
 const {readAndAppend} = require('../helpers/fsUtils');
+
+//Used to readFile and writeFile for delete route
 const fs = require('fs')
+
+//Used to generate unique ID's for the notes
 const uuid = require('../helpers/uuid')
 
+//Basic get and retive route. Used to get the list of notes from db.json
 notes.get('/', (req, res) => {
     console.log('landed on notes')
     res.sendFile(db)
 })
 
+//Creates an object from the body request, and appends it to the db.json file
 notes.post('/', (req, res) => {
     if (req.body.title && req.body.text)
     {   
@@ -24,6 +34,7 @@ notes.post('/', (req, res) => {
     }
 })
 
+//Reads the db file, and iterates through it. If a note exists with the same ID as the request, it is spliced off and re-written
 notes.delete('/:id', (req, res) => {
     let notesData
     fs.readFile(db, (error, data) => {
